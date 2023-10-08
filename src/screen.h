@@ -2,6 +2,7 @@
 #define SCREEN_H
 
 #include <stdio.h>
+#include <stdarg.h>
 #include <stdbool.h>
 #include <windows.h>
 
@@ -19,22 +20,22 @@ typedef struct ScreenBuffer{
 
 } ScreenBuffer;
 
-// typedef struct PartialScreenBuffer{
-//     int width;
-//     int height;
+typedef struct PartialScreenBuffer{
+    int width;
+    int height;
 
-//     COORD coord;
+    COORD writeAt;
 
-//     char* screen;
-// } PartialScreenBuffer;
+    char* screen;
+} PartialScreenBuffer;
 
 ScreenBuffer createScreenBuffer(int width, int height, int writeAt_X, int writeAt_Y);
+PartialScreenBuffer createPartialScreenBuffer(int width, int height, int writeAt_X, int writeAt_Y);
 
-// bool mergeScreenBuffer(ScreenBuffer* sb, PartialScreenBuffer psbs);
 bool writeScreen(ScreenBuffer sb);
+bool writePartialScreen(ScreenBuffer sb, PartialScreenBuffer psbs,...);
 
 void clearScreen(ScreenBuffer* sb);
 void setScreenActive(ScreenBuffer sb);
-// void clearPartialScreen(PartialScreenBuffer* psb);
 
 #endif /* SCREEN_H */

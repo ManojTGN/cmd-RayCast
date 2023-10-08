@@ -11,12 +11,9 @@ ScreenBuffer createScreenBuffer(int width, int height, int writeAt_X, int writeA
     sb.dwBytesWritten = 0;
 
     sb.screen = (char*)malloc(width * height);
-    for(int h = 0; h < height; h++){
-        for(int w = 0; w < width; w++){
-            if(w == 0 || h == 0 || w == width-1 || h == height-1) sb.screen[h*width + w] = '0';
-            else sb.screen[h*width + w] = ' ';
-        }
-    }
+    for(int h = 0; h < height; h++)
+    for(int w = 0; w < width; w++)
+    sb.screen[h*width + w] = ' ';
 
     sb.screen[height*width - 1] = '\0';
     sb.hConsole = CreateConsoleScreenBuffer(GENERIC_READ | GENERIC_WRITE, 0, NULL, CONSOLE_TEXTMODE_BUFFER, NULL);
@@ -36,24 +33,53 @@ ScreenBuffer createScreenBuffer(int width, int height, int writeAt_X, int writeA
 
 }
 
+PartialScreenBuffer createPartialScreenBuffer(int width, int height, int writeAt_X, int writeAt_Y){
+    PartialScreenBuffer psb;
+    psb.width = width;
+    psb.height = height;
+    psb.writeAt.X = writeAt_X;
+    psb.writeAt.Y = writeAt_Y;
+
+    psb.screen = (char*)malloc(width * height);
+    for(int w = 0; w < width; w++)
+    for(int h = 0; h < height; h++)
+    psb.screen[w*height + h] = ' ';
+
+    psb.screen[width*height -1] = '\0';
+    return psb;
+}
+
 bool writeScreen( ScreenBuffer sb ){
-
     BOOL fSuccess = WriteConsoleOutputCharacter(sb.hConsole, sb.screen, sb.width * sb.height, sb.writeAt, &sb.dwBytesWritten);
-
     return fSuccess;
-
 }
 
 void setScreenActive(ScreenBuffer sb){
-
     SetConsoleActiveScreenBuffer(sb.hConsole);
-
 }
 
 void clearScreen( ScreenBuffer* sb ){
+    //todo: remove
+}
+
+void clearPartialScreen( PartialScreenBuffer* psb ){
     
 }
 
-// void clearPartialScreen( PartialScreenBuffer* psb ){
-    
-// }
+bool writePartialScreen(ScreenBuffer sb, PartialScreenBuffer psbs,...){
+    va_list args;BOOL fSuccess;
+    va_start(args, psbs);
+
+    //@todo: change 1 to number of args & fix console crash line:76
+    for(int i = 0; i < 1; i++){
+        PartialScreenBuffer tmp = va_arg(args, PartialScreenBuffer);
+        fSuccess = WriteConsoleOutputCharacter(sb.hConsole, tmp.screen, tmp.width * tmp.height, tmp.writeAt, &sb.dwBytesWritten);
+        if(!fSuccess){ 
+            va_end(args);
+            return false;
+        }
+    }
+
+    va_end(args);
+    return true;
+}
