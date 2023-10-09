@@ -2,7 +2,7 @@
 #define SCREEN_H
 
 #include <stdio.h>
-#include <stdarg.h>
+// #include <stdarg.h>
 #include <stdbool.h>
 #include <windows.h>
 
@@ -33,9 +33,8 @@ ScreenBuffer createScreenBuffer(int width, int height, int writeAt_X, int writeA
 PartialScreenBuffer createPartialScreenBuffer(int width, int height, int writeAt_X, int writeAt_Y);
 
 bool writeScreen(ScreenBuffer sb);
-bool writePartialScreen(ScreenBuffer sb, PartialScreenBuffer psbs,...);
+bool writePartialScreen(ScreenBuffer *sb, PartialScreenBuffer psb);
 
-void clearScreen(ScreenBuffer* sb);
 void setScreenActive(ScreenBuffer sb);
 
 #endif /* SCREEN_H */

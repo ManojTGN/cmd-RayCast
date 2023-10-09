@@ -58,28 +58,17 @@ void setScreenActive(ScreenBuffer sb){
     SetConsoleActiveScreenBuffer(sb.hConsole);
 }
 
-void clearScreen( ScreenBuffer* sb ){
-    //todo: remove
-}
+bool writePartialScreen(ScreenBuffer *sb, PartialScreenBuffer psb){
+    if(psb.writeAt.X < 0 || psb.writeAt.Y < 0 || psb.writeAt.X>sb->width || psb.writeAt.Y>sb->height) return false;
 
-void clearPartialScreen( PartialScreenBuffer* psb ){
-    
-}
-
-bool writePartialScreen(ScreenBuffer sb, PartialScreenBuffer psbs,...){
-    va_list args;BOOL fSuccess;
-    va_start(args, psbs);
-
-    //@todo: change 1 to number of args & fix console crash line:76
-    for(int i = 0; i < 1; i++){
-        PartialScreenBuffer tmp = va_arg(args, PartialScreenBuffer);
-        fSuccess = WriteConsoleOutputCharacter(sb.hConsole, tmp.screen, tmp.width * tmp.height, tmp.writeAt, &sb.dwBytesWritten);
-        if(!fSuccess){ 
-            va_end(args);
-            return false;
-        }
+    int tmp;
+    for(int w = 0; w < psb.width; w++){
+    for(int h = 0; h < psb.height; h++){
+        tmp = (psb.writeAt.X+w)*sb->width + (psb.writeAt.Y+h);
+        if( tmp < 0 || tmp > sb->width*sb->height-1 ) continue;
+        sb->screen[tmp] = psb.screen[w*psb.height +h];
+    }
     }
 
-    va_end(args);
     return true;
 }
